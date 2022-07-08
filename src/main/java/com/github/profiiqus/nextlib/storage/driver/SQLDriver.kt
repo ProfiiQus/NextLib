@@ -54,6 +54,17 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
     }
 
     /**
+     * Executes a synchronous query on the database.
+     */
+    open fun executeSync(query: String?) {
+        connection = createConnection()
+        val statement = connection!!.createStatement()
+        statement.execute(query)
+        statement.close()
+        connection!!.close()
+    }
+
+    /**
      * Executes an asynchronous prepared statement query on the database.
      */
     open fun execute(preparedStatement: PreparedStatement) {
@@ -65,6 +76,16 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
                 connection!!.close()
             }
         }.runTaskAsynchronously(plugin)
+    }
+
+    /**
+     * Executes a synchronous prepared statement query on the database.
+     */
+    open fun executeSync(preparedStatement: PreparedStatement) {
+        connection = createConnection()
+        preparedStatement.execute()
+        preparedStatement.close()
+        connection!!.close()
     }
 
     /**
@@ -86,6 +107,20 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
     }
 
     /**
+     * Executes a synchronous query on the database.
+     * The result of the query is returned to the provided SQLCallback once the query is completed.
+     */
+    open fun executeSyncQuery(query: String?, callback: SQLCallback) {
+        connection = createConnection()
+        val statement = connection!!.createStatement()
+        val resultSet = statement.executeQuery(query)
+        callback.onQueryDone(resultSet)
+        connection!!.close()
+        statement.close()
+        resultSet.close()
+    }
+
+    /**
      * Executes an asynchronous prepared statement query on the database.
      * The result of the query is returned to the provided SQLCallback once the query is completed.
      */
@@ -100,6 +135,19 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
                 resultSet.close()
             }
         }.runTaskAsynchronously(plugin)
+    }
+
+    /**
+     * Executes a synchronous prepared statement query on the database.
+     * The result of the query is returned to the provided SQLCallback once the query is completed.
+     */
+    open fun executeSyncQuery(preparedStatement: PreparedStatement, callback: SQLCallback) {
+        connection = createConnection()
+        val resultSet = preparedStatement.executeQuery()
+        callback.onQueryDone(resultSet)
+        connection!!.close()
+        preparedStatement.close()
+        resultSet.close()
     }
 
     /**

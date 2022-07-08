@@ -67,10 +67,24 @@ class StorageManager {
     }
 
     /**
+     * Executes a synchronous query on the database.
+     */
+    fun executeSync(query: String) {
+        driver.executeSync(query)
+    }
+
+    /**
      * Executes an asynchronous prepared statement query on the database.
      */
     fun execute(preparedStatement: PreparedStatement) {
         driver.execute(preparedStatement)
+    }
+
+    /**
+     * Executes a synchronous prepared statement query on the database.
+     */
+    fun executeSync(preparedStatement: PreparedStatement) {
+        driver.executeSync(preparedStatement)
     }
 
     /**
@@ -82,11 +96,27 @@ class StorageManager {
     }
 
     /**
+     * Executes a synchronous query on the database.
+     * The result of the query is returned as a part of the SQLCallback.
+     */
+    fun executeSyncQuery(query: String, callback: SQLCallback) {
+        driver.executeSyncQuery(query, callback)
+    }
+
+    /**
      * Executes an asynchronous prepared statement query on the database.
      * The result of the query is returned as a part of the SQLCallback.
      */
     fun executeQuery(preparedStatement: PreparedStatement, callback: SQLCallback) {
         driver.executeQuery(preparedStatement, callback)
+    }
+
+    /**
+     * Executes a synchronous prepared statement query on the database.
+     * The result of the query is returned as a part of the SQLCallback.
+     */
+    fun executeSyncQuery(preparedStatement: PreparedStatement, callback: SQLCallback) {
+        driver.executeSyncQuery(preparedStatement, callback)
     }
 
     /**
