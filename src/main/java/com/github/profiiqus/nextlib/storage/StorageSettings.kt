@@ -1,5 +1,9 @@
 package com.github.profiiqus.nextlib.storage
 
+/**
+ * Simple wrapper class representing the StorageManager's complete configuration.
+ * @author ProfiiQus
+ */
 class StorageSettings private constructor(
     val storageType: StorageType,
     val hostname: String,
@@ -11,28 +15,23 @@ class StorageSettings private constructor(
     val dataSourceProperties: HashMap<String, String>
 ) {
 
+    /**
+     * Default constructor with default values, configured for SQLite.
+     */
     constructor() : this(
         StorageType.SQLITE,
-        "localhost",
-        3306,
-        "minecraft",
-        "root",
         "",
-        "data",
+        3306,
+        "",
+        "",
+        "",
+        "",
         hashMapOf()
     )
 
-    constructor(storageType: StorageType) : this(
-        storageType,
-        "localhost",
-        3306,
-        "minecraft",
-        "root",
-        "",
-        "data",
-        hashMapOf()
-    )
-
+    /**
+     * Constructor with values specified.
+     */
     constructor(
         storageType: StorageType,
         hostname: String,
@@ -42,6 +41,9 @@ class StorageSettings private constructor(
         password: String
     ) : this(storageType, hostname, port, database, username, password, "data", hashMapOf())
 
+    /**
+     * Adds a data source property that's used for HikariCP initiation.
+     */
     fun addDataSourceProperty(key: String, value: String) {
         dataSourceProperties[key] = value
     }

@@ -4,10 +4,18 @@ import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.plugin.java.JavaPlugin
 import java.sql.Connection
 
+/**
+ * SQL Driver for communication with the MariaDB database.
+ * @author ProfiiQus
+ */
 class MariaDBDriver(plugin: JavaPlugin) : SQLDriver(plugin) {
 
     private var dataSource: HikariDataSource? = null
 
+    /**
+     * Setups the database driver.
+     * Configures the Hikari connection pool, loads the SQL driver and instantiates the data source.
+     */
     override fun setup() {
         super.setupHikariConfig()
         Class.forName("org.mariadb.jdbc.Driver")
@@ -15,6 +23,10 @@ class MariaDBDriver(plugin: JavaPlugin) : SQLDriver(plugin) {
         dataSource = HikariDataSource(super.hikariConfig)
     }
 
+    /**
+     * Returns an established connection to the database.
+     * The connection can be either newly opened or an already opened previous connection.
+     */
     override fun createConnection(): Connection {
         if (connection != null && !connection!!.isClosed) {
             return connection as Connection

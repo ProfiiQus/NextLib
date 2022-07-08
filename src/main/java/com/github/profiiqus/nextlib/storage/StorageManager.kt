@@ -8,6 +8,10 @@ import org.bukkit.plugin.java.JavaPlugin
 import java.sql.Connection
 import java.sql.PreparedStatement
 
+/**
+ * The main class for communication with the SQL database(s).
+ * @author ProfiiQus
+ */
 class StorageManager {
 
     private var plugin: JavaPlugin
@@ -15,8 +19,14 @@ class StorageManager {
     private var drivers: Map<StorageType, SQLDriver>
     private var driver: SQLDriver
 
+    /**
+     * Default constructor with default values, initiates a simple SQLite database.
+     */
     constructor(plugin: JavaPlugin) : this(plugin, StorageSettings())
 
+    /**
+     * A more complex constructor with provided configuration object.
+     */
     constructor(plugin: JavaPlugin, settings: StorageSettings) {
         this.plugin = plugin
         this.settings = settings
@@ -31,35 +41,58 @@ class StorageManager {
         }
 
         driver = drivers[this.settings.storageType]!!
-        driver.settings = settings
         driver.setup()
         driver.test()
     }
 
+    /**
+     * Returns an open connection to the database.
+     */
     fun getConnection(): Connection {
         return driver.createConnection()
     }
 
+    /**
+     * Prepares a new statement for usage above the database.
+     */
     fun prepareStatement(query: String): PreparedStatement {
         return this.getConnection().prepareStatement(query)
     }
 
+    /**
+     * Executes an asynchronous query on the database.
+     */
     fun execute(query: String) {
         driver.execute(query)
     }
 
+    /**
+     * Executes an asynchronous prepared statement query on the database.
+     */
     fun execute(preparedStatement: PreparedStatement) {
         driver.execute(preparedStatement)
     }
 
+    /**
+     * Executes an asynchronous query on the database.
+     * The result of the query is returned as a part of the SQLCallback.
+     */
     fun executeQuery(query: String, callback: SQLCallback) {
         driver.executeQuery(query, callback)
     }
 
+    /**
+     * Executes an asynchronous prepared statement query on the database.
+     * The result of the query is returned as a part of the SQLCallback.
+     */
     fun executeQuery(preparedStatement: PreparedStatement, callback: SQLCallback) {
         driver.executeQuery(preparedStatement, callback)
     }
 
+    /**
+     * Closes all the connections and exits the drivers.
+     * Use only when disabling the plugin.
+     */
     fun exit() {
         driver.exit()
     }

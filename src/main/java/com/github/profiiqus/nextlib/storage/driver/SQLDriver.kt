@@ -10,6 +10,10 @@ import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.SQLException
 
+/**
+ * An abstract class for SQLDriver creation.
+ * @author ProfiiQus
+ */
 abstract class SQLDriver(protected var plugin: JavaPlugin) {
 
     protected var connection: Connection? = null
@@ -20,14 +24,23 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
         private const val TEST_QUERY = "SELECT 1"
     }
 
+    /**
+     * Prepares and configures the SQLDriver.
+     */
     open fun setup() {
         throw NotImplementedException()
     }
 
+    /**
+     * Returns an open connection to the database.
+     */
     open fun createConnection(): Connection {
         throw NotImplementedException()
     }
 
+    /**
+     * Executes an asynchronous query on the database.
+     */
     open fun execute(query: String?) {
         object : BukkitRunnable() {
             override fun run() {
@@ -40,6 +53,9 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
         }.runTaskAsynchronously(plugin)
     }
 
+    /**
+     * Executes an asynchronous prepared statement query on the database.
+     */
     open fun execute(preparedStatement: PreparedStatement) {
         object: BukkitRunnable() {
             override fun run() {
@@ -51,6 +67,10 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
         }.runTaskAsynchronously(plugin)
     }
 
+    /**
+     * Executes an asynchronous query on the database.
+     * The result of the query is returned to the provided SQLCallback once the query is completed.
+     */
     open fun executeQuery(query: String?, callback: SQLCallback) {
         object : BukkitRunnable() {
             override fun run() {
@@ -65,6 +85,10 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
         }.runTaskAsynchronously(plugin)
     }
 
+    /**
+     * Executes an asynchronous prepared statement query on the database.
+     * The result of the query is returned to the provided SQLCallback once the query is completed.
+     */
     open fun executeQuery(preparedStatement: PreparedStatement, callback: SQLCallback) {
         object: BukkitRunnable() {
             override fun run() {
@@ -78,12 +102,18 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
         }.runTaskAsynchronously(plugin)
     }
 
+    /**
+     * Closes all the connections and disables the SQL Driver.
+     */
     fun exit() {
         if (connection != null && !connection!!.isClosed) {
             connection!!.close()
         }
     }
 
+    /**
+     * Tests the connection to the database.
+     */
     @Throws(SQLException::class, ClassNotFoundException::class)
     fun test() {
         val statement = createConnection().createStatement()
@@ -91,6 +121,9 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
         statement.close()
     }
 
+    /**
+     * Configures the Hikari connection pool instance from the provided StorageSettings.
+     */
     protected fun setupHikariConfig() {
         hikariConfig = HikariConfig()
         val properties = hikariConfig!!.dataSourceProperties
@@ -105,6 +138,9 @@ abstract class SQLDriver(protected var plugin: JavaPlugin) {
         }
     }
 
+    /**
+     * Builds the JDBC url.
+     */
     protected fun setJDBCUrl(driverPath: String) {
         val properties = this.hikariConfig!!.dataSourceProperties
         this.hikariConfig!!.jdbcUrl = "$driverPath://${properties["serverName"]}:${properties["port"]}/${properties["databaseName"]}"
