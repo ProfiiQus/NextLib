@@ -6,7 +6,7 @@
 
     <groupId>com.github.profiiqus</groupId>
     <artifactId>NextLib</artifactId>
-    <version>1.0</version>
+    <version>1.0-alpha.3</version>
     <packaging>jar</packaging>
 
     <name>NextLib</name>
